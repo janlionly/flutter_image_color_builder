@@ -92,14 +92,14 @@ class _MyHomePageState extends State<MyHomePage> {
         // in the middle of the parent.
         child: ImageColorBuilder(
           url: 'https://picsum.photos/200',
-          builder: (BuildContext context, Image image, Color imageColor) {
+          builder: (BuildContext context, Image? image, Color? imageColor) {
             return Container(
               padding: const EdgeInsets.all(40),
               decoration: BoxDecoration(
-                color: imageColor.withOpacity(0.8),
+                color: imageColor?.withOpacity(0.8) ?? Colors.red,
                 borderRadius: const BorderRadius.all(Radius.circular(8)),
               ),
-              child: image,
+              child: image ?? const Text('No image?'),
             );
           },
         ),

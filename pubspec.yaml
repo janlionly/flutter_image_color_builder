@@ -1,6 +1,6 @@
 name: image_color_builder
 description: A Flutter package for generating the image and the image's dominant color with a given image url.
-version: 1.0.0
+version: 1.0.1
 homepage: https://github.com/janlionly/flutter_image_color_builder
 
 environment:
@@ -11,7 +11,7 @@ dependencies:
   flutter:
     sdk: flutter
   palette_generator: ^0.3.3+3
-  http:
+  http: ^0.13.0
 
 dev_dependencies:
   flutter_test:
