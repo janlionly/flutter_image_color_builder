@@ -1,5 +1,7 @@
 # Image Color Builder
 
+[![pub package](https://img.shields.io/pub/v/image_color_builder.svg)](https://pub.dartlang.org/packages/image_color_builder)<a href="https://github.com/janlionly/flutter_image_color_builder"><img src="https://img.shields.io/github/stars/janlionly/flutter_image_color_builder.svg?style=flat&logo=github&colorB=deeppink&label=stars" alt="Star on Github"></a>
+
 A Flutter package for generating the image and the image's dominant color with a given image url.
 
 ## Usage
