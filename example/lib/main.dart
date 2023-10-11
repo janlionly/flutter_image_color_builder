@@ -1,5 +1,8 @@
+import 'dart:math';
+
 import 'package:flutter/material.dart';
 import 'package:image_color_builder/image_color_builder.dart';
+import 'dart:developer' as dev;
 
 void main() {
   runApp(const MyApp());
@@ -65,7 +68,9 @@ class _MyHomePageState extends State<MyHomePage> {
       // so that the display can reflect the updated values. If we changed
       // _counter without calling setState(), then the build method would not be
       // called again, and so nothing would appear to happen.
-      _counter++;
+      // _counter++;
+      _counter = (Random().nextInt(100)) % 20;
+      dev.log('random int: $_counter');
     });
   }
 
@@ -91,7 +96,9 @@ class _MyHomePageState extends State<MyHomePage> {
         // Center is a layout widget. It takes a single child and positions it
         // in the middle of the parent.
         child: ImageColorBuilder(
-          url: 'https://picsum.photos/200',
+          url: 'https://picsum.photos/${_counter + 200}',
+          fit: BoxFit.cover,
+          maxCachedCount: 10,
           builder: (BuildContext context, Image? image, Color? imageColor) {
             return Container(
               padding: const EdgeInsets.all(40),

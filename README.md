@@ -11,6 +11,8 @@ See examples to `/example` folder.
 ```dart
 ImageColorBuilder(
   url: 'https://picsum.photos/200',
+  fit: BoxFit.cover,
+  maxCachedCount: 15,
   builder: (BuildContext context, Image? image, Color? imageColor) {
     return Container(
       padding: const EdgeInsets.all(40),

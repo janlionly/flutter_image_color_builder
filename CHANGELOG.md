@@ -6,3 +6,7 @@
 
 * Done: Support url is optional or the image get failed to Image null safety.
 
+## [1.0.2] - 11 Oct 2023
+
+* Feat: Support image memory caching with the key of url.
+
