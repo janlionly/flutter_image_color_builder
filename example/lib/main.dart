@@ -93,24 +93,34 @@ class _MyHomePageState extends State<MyHomePage> {
         title: Text(widget.title),
       ),
       body: Center(
-        // Center is a layout widget. It takes a single child and positions it
-        // in the middle of the parent.
-        child: ImageColorBuilder(
-          url: 'https://picsum.photos/${_counter + 200}',
-          // url: 'assets/images/local.jpg',
-          fit: BoxFit.cover,
-          maxCachedCount: 10,
-          builder: (BuildContext context, Image? image, Color? imageColor) {
-            return Container(
-              padding: const EdgeInsets.all(40),
-              decoration: BoxDecoration(
-                color: imageColor?.withOpacity(0.8) ?? Colors.red,
-                borderRadius: const BorderRadius.all(Radius.circular(8)),
-              ),
-              child: image ?? const Text('No image?'),
-            );
-          },
-        ),
+        child:SizedBox(
+          width: 240,
+          height: 240,
+          child: ImageColorBuilder(
+            url: 'https://picsum.photos/${_counter + 200}',
+            // url: 'assets/images/local.jpg',
+            fit: BoxFit.cover,
+            maxCachedCount: 10,
+            builder: (BuildContext context, Image? image, Color? imageColor) {
+              return Container(
+                padding: const EdgeInsets.all(40),
+                decoration: BoxDecoration(
+                  color: imageColor?.withOpacity(0.8) ?? Colors.red,
+                  borderRadius: const BorderRadius.all(Radius.circular(8)),
+                ),
+                child: image ?? const Center(child: Text('No image?')),
+              );
+            },
+            placeholder: (contect, url) => Image.asset(
+              'assets/images/placeholder.png',
+              fit: BoxFit.fill,
+            ),
+            errorWidget: (context, url, error) => Image.asset(
+              'assets/images/error.png',
+              fit: BoxFit.fill,
+            ),
+          ),
+        )
       ),
       floatingActionButton: FloatingActionButton(
         onPressed: _incrementCounter,

@@ -24,6 +24,14 @@ ImageColorBuilder(
       child: image ?? const Text('No image?'),
     );
   },
+  placeholder: (contect, url) => Image.asset(
+    'assets/images/placeholder.png',
+    fit: BoxFit.fill,
+  ),
+  errorWidget: (context, url, error) => Image.asset(
+    'assets/images/error.png',
+    fit: BoxFit.fill,
+  ),
 )
 ```
 

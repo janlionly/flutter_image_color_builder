@@ -17,12 +17,14 @@ class _Dev {
 
 class ImageColorBuilder extends StatelessWidget {
   const ImageColorBuilder({
-    required this.builder, 
-    this.url, 
+    required this.builder,
+    this.url,
+    this.fit,
     this.isCached = true, 
     this.maxCachedCount = 50, 
-    this.fit, 
-    super.key
+    this.placeholder,
+    this.errorWidget,
+    super.key,
   });
    /// Image URL
   final String? url;
@@ -42,6 +44,12 @@ class ImageColorBuilder extends StatelessWidget {
   /// Builder function
   final Widget Function(BuildContext context, Image? image, Color? imageColor) builder;
 
+  /// Placeholder Widget
+  final Widget Function(BuildContext contect, String? url)? placeholder;
+
+  /// Error Widget
+  final Widget Function(BuildContext context, String? url, dynamic error)? errorWidget;
+
   @override
   Widget build(BuildContext context) {
     if (url == null || url!.isEmpty) {
@@ -58,9 +66,17 @@ class ImageColorBuilder extends StatelessWidget {
     return FutureBuilder<List>(
       future: _getImageColor(),
       builder: (BuildContext context, AsyncSnapshot<List> snapshot) {
-        if (!snapshot.hasData || snapshot.hasError || snapshot.data!.isEmpty) {
+        if (!snapshot.hasData || snapshot.hasError || snapshot.data!.isEmpty || snapshot.data!.length == 1) {
+          Object? error = snapshot.data?.first;
+
+          if (error != null && errorWidget != null) {
+            return errorWidget!(context, url, error);
+          } else if (placeholder != null) {
+            return placeholder!(context, url);
+          } 
           return builder(context, null, null);
         }
+
         return builder(
           context, 
           (snapshot.data?.first != null ? Image.memory(snapshot.data![0], fit: fit ?? BoxFit.fill) : null), 
@@ -71,6 +87,8 @@ class ImageColorBuilder extends StatelessWidget {
   }
   
   Future<List> _getImageColor() async {
+    Object? error;
+
     if (url != null && url!.isNotEmpty) {
       final targetUrl = url!;
 
@@ -80,7 +98,6 @@ class ImageColorBuilder extends StatelessWidget {
       late Uint8List imageBytes;
 
       http.Response? response;
-      Object? error;
 
       try {
         if (targetUrl.toLowerCase().startsWith('http')) {
@@ -109,7 +126,8 @@ class ImageColorBuilder extends StatelessWidget {
         return [imageBytes, paletteGenerator.dominantColor?.color];
       }
     }
-    return [];
+
+    return error != null ? [error] : [];
   }
 
   void _clearHalfOfCache() {

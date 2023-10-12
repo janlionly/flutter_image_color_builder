@@ -14,3 +14,7 @@
 
 * Feat: Support to read the local path image.
 
+## [1.0.4] - 12 Oct 2023
+
+* Feat: Support to add placeholder and error widget.
+
