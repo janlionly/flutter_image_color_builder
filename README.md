@@ -11,6 +11,7 @@ See examples to `/example` folder.
 ```dart
 ImageColorBuilder(
   url: 'https://picsum.photos/200',
+  // url: 'assets/images/local.jpg', // support to read local image
   fit: BoxFit.cover,
   maxCachedCount: 15,
   builder: (BuildContext context, Image? image, Color? imageColor) {

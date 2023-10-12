@@ -97,6 +97,7 @@ class _MyHomePageState extends State<MyHomePage> {
         // in the middle of the parent.
         child: ImageColorBuilder(
           url: 'https://picsum.photos/${_counter + 200}',
+          // url: 'assets/images/local.jpg',
           fit: BoxFit.cover,
           maxCachedCount: 10,
           builder: (BuildContext context, Image? image, Color? imageColor) {

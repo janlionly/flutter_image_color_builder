@@ -1,10 +1,12 @@
 library image_color_builder;
 
+import 'dart:typed_data';
 import 'dart:ui';
 
 import 'package:flutter/material.dart';
 import 'package:palette_generator/palette_generator.dart';
 import 'package:http/http.dart' as http;
+import 'package:flutter/services.dart' show rootBundle;
 
 // import 'dart:developer' as dev;
 class _Dev {
@@ -71,30 +73,40 @@ class ImageColorBuilder extends StatelessWidget {
   Future<List> _getImageColor() async {
     if (url != null && url!.isNotEmpty) {
       final targetUrl = url!;
-      late final http.Response response;
+
       late final Codec codec;
       late final FrameInfo frameInfo;
       late final PaletteGenerator paletteGenerator;
+      late Uint8List imageBytes;
+
+      http.Response? response;
       Object? error;
+
       try {
-        response = await http.get(Uri.parse(targetUrl));
-        codec = await instantiateImageCodec(response.bodyBytes);
+        if (targetUrl.toLowerCase().startsWith('http')) {
+          response = await http.get(Uri.parse(targetUrl));
+          imageBytes = response.bodyBytes;
+        } else {
+          imageBytes = (await rootBundle.load(targetUrl)).buffer.asUint8List();
+        }
+        codec = await instantiateImageCodec(imageBytes);
         frameInfo = await codec.getNextFrame();
         paletteGenerator = await PaletteGenerator.fromImage(frameInfo.image);
       } catch (e) {
         error = e;
       }
-      if (error == null && response.statusCode == 200) {
+
+      if (error == null && (response == null || (response.statusCode == 200))) {
         if (isCached) {
           _cachedImages[targetUrl] = [
-            response.bodyBytes, 
+            imageBytes, 
             paletteGenerator.dominantColor?.color, 
             DateTime.now().microsecondsSinceEpoch
           ];
           _Dev.log('current images:${_cachedImageDescription()}');
           _clearHalfOfCache();
         }
-        return [response.bodyBytes, paletteGenerator.dominantColor?.color];
+        return [imageBytes, paletteGenerator.dominantColor?.color];
       }
     }
     return [];

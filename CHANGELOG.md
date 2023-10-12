@@ -10,3 +10,7 @@
 
 * Feat: Support image memory caching with the key of url.
 
+## [1.0.3] - 12 Oct 2023
+
+* Feat: Support to read the local path image.
+
