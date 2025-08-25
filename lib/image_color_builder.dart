@@ -20,13 +20,14 @@ class ImageColorBuilder extends StatelessWidget {
     required this.builder,
     this.url,
     this.fit,
-    this.isCached = true, 
-    this.maxCachedCount = 50, 
+    this.isCached = true,
+    this.maxCachedCount = 50,
     this.placeholder,
     this.errorWidget,
     super.key,
   });
-   /// Image URL
+
+  /// Image URL
   final String? url;
 
   /// Image Box Fix
@@ -42,13 +43,15 @@ class ImageColorBuilder extends StatelessWidget {
   final int maxCachedCount;
 
   /// Builder function
-  final Widget Function(BuildContext context, Image? image, Color? imageColor) builder;
+  final Widget Function(BuildContext context, Image? image, Color? imageColor)
+      builder;
 
   /// Placeholder Widget
   final Widget Function(BuildContext contect, String? url)? placeholder;
 
   /// Error Widget
-  final Widget Function(BuildContext context, String? url, dynamic error)? errorWidget;
+  final Widget Function(BuildContext context, String? url, dynamic error)?
+      errorWidget;
 
   @override
   Widget build(BuildContext context) {
@@ -58,34 +61,52 @@ class ImageColorBuilder extends StatelessWidget {
     final cache = _cachedImages[url];
     if (isCached && cache != null && cache.length >= 2) {
       return builder(
-        context, 
+        context,
         Image.memory(cache[0], fit: fit ?? BoxFit.fill),
         cache[1],
       );
     }
     return FutureBuilder<List>(
-      future: _getImageColor(),
-      builder: (BuildContext context, AsyncSnapshot<List> snapshot) {
-        if (!snapshot.hasData || snapshot.hasError || snapshot.data!.isEmpty || snapshot.data!.length == 1) {
-          Object? error = snapshot.data?.first;
+        future: _getImageColor(),
+        builder: (BuildContext context, AsyncSnapshot<List> snapshot) {
+          if (!snapshot.hasData ||
+              snapshot.hasError ||
+              snapshot.data!.isEmpty ||
+              snapshot.data!.length == 1) {
+            Object? error = snapshot.data?.first;
 
-          if (error != null && errorWidget != null) {
-            return errorWidget!(context, url, error);
-          } else if (placeholder != null) {
-            return placeholder!(context, url);
-          } 
-          return builder(context, null, null);
-        }
+            if (error != null && errorWidget != null) {
+              return errorWidget!(context, url, error);
+            } else if (placeholder != null) {
+              return placeholder!(context, url);
+            }
+            return builder(context, null, null);
+          }
 
-        return builder(
-          context, 
-          (snapshot.data?.first != null ? Image.memory(snapshot.data![0], fit: fit ?? BoxFit.fill) : null), 
-          (snapshot.data != null && snapshot.data!.length >= 2 ? snapshot.data![1] : null)
-        );
-      }
-    );
+          return builder(
+              context,
+              (snapshot.data?.first != null
+                  ? Image.memory(snapshot.data![0], fit: fit ?? BoxFit.fill)
+                  : null),
+              (snapshot.data != null && snapshot.data!.length >= 2
+                  ? snapshot.data![1]
+                  : null));
+        });
   }
-  
+
+  Future<Color?> imageColor() async {
+    if (url == null || url!.isEmpty) {
+      return null;
+    }
+
+    final cache = _cachedImages[url];
+    if (isCached && cache != null && cache.length >= 2) {
+      return cache[1];
+    }
+
+    return (await _getImageColor())[1];
+  }
+
   Future<List> _getImageColor() async {
     Object? error;
 
@@ -116,8 +137,8 @@ class ImageColorBuilder extends StatelessWidget {
       if (error == null && (response == null || (response.statusCode == 200))) {
         if (isCached) {
           _cachedImages[targetUrl] = [
-            imageBytes, 
-            paletteGenerator.dominantColor?.color, 
+            imageBytes,
+            paletteGenerator.dominantColor?.color,
             DateTime.now().microsecondsSinceEpoch
           ];
           _Dev.log('current images:${_cachedImageDescription()}');
@@ -133,8 +154,9 @@ class ImageColorBuilder extends StatelessWidget {
   void _clearHalfOfCache() {
     if (_cachedImages.length >= maxCachedCount) {
       _Dev.log('origin images:${_cachedImageDescription()}');
-      final sorted = _cachedImages.entries.toList()..sort((e1, e2) => e1.value[2].compareTo(e2.value[2]));
-      for (var i = 0; i < maxCachedCount/2; i++) {
+      final sorted = _cachedImages.entries.toList()
+        ..sort((e1, e2) => e1.value[2].compareTo(e2.value[2]));
+      for (var i = 0; i < maxCachedCount / 2; i++) {
         _Dev.log('removed the datetime: ${sorted[i].value[2]}');
         _cachedImages.remove(sorted[i].key);
       }
@@ -145,9 +167,9 @@ class ImageColorBuilder extends StatelessWidget {
   String _cachedImageDescription() {
     String description = '\n';
     for (String key in _cachedImages.keys) {
-      description += '  $key: [${_cachedImages[key]![1]}, ${_cachedImages[key]![2]}],\n';
+      description +=
+          '  $key: [${_cachedImages[key]![1]}, ${_cachedImages[key]![2]}],\n';
     }
     return '\n{$description}\n';
   }
 }
-
